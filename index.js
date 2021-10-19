@@ -18,10 +18,13 @@ try {
 app.get('/', getAll);
 app.get('/api/wallet-watch/:wallet_address', getByWallet);
 
-app.listen(3000, () => {
+app.listen(80, () => {
     console.log(`app listening at http://localhost:80`)
 });
-getPastTransferList();
+try{
+    getPastTransferList();
+
+}catch(e){}
 while(true) {
     try{
         await getNewestTransferList();
