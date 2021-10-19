@@ -55,7 +55,8 @@ var getTransferList = async() => {
     var startblock = lastblock + 1;
     var url = 'https://api.etherscan.io/api?module=account&sort=desc' + '&apikey='+ process.env.API_KEY + '&address=' + process.env.ADDRESS;
     const resp = await fetch( url + '&action=tokennfttx' + '&startblock=' + startblock);
-    console.log(resp);
+    const { result: nft_tx_list } = await resp.json();
+    console.log(nft_tx_list);
     for(const nft_tx of nft_tx_list) {
         const nft_tx_detail_resp = await fetch( url + '&action=txlist' + '&startblock=' + nft_tx.blockNumber + '&endblock' + nft_tx.blockNumber + '&address=' + nft_tx.from);
         console.log(nft_tx_detail_resp)
