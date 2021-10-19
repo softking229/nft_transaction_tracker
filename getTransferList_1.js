@@ -6,6 +6,7 @@ import converter from 'hex2dec';
 import fs from 'fs-extra'
 import abiDecoder from 'abi-decoder'
 dotenv.config({ silent: process.env.NODE_ENV === 'production' });
+const timer = util.promisify(setTimeout);
 const abi = fs.readJsonSync("abi.json");
 abiDecoder.addABI(abi);
 
@@ -40,18 +41,22 @@ export const getNewestTransferList = async() => {
     await getTransferList(url);
 }
 
-var getTransferList = async(url) => {
+export const getTransferList = async(url, saveDatabase = true) => {
     const resp = await fetch( url);
-    const { result: nft_tx_list } = await resp.json();
+    const { result: nft_tx_list, status: status } = await resp.json();
     var results = [];
+    if( status != "1")
+        return results;
     console.log(nft_tx_list.length);
 
     var tokenID_list = [];
     var inserted_cnt = 0;
     for(let nft_tx of nft_tx_list) {
-        const existCheck = await SomeModel.find({transactionHash: nft_tx_list.transactionHash}).limit(1).exec();
-        if( existCheck.length)
-            continue;
+        if( saveDatabase) {
+            const existCheck = await SomeModel.find({transactionHash: nft_tx_list.transactionHash}).limit(1).exec();
+            if( existCheck.length)
+                continue;
+        }
         if( tokenID_list.find(each => each.hash == nft_tx.transactionHash) === undefined) {
             url = 'https://api.etherscan.io/api?module=account&action=txlist&address=0x' + nft_tx.topics[2].substr(26) 
                 + '&startblock=' + nft_tx.blockNumber + '&endblock=' + nft_tx.blockNumber + '&apikey=CUWP9CGZEG4FTWYUHK7C5MNVQMEJK7YGPK';
@@ -76,11 +81,16 @@ var getTransferList = async(url) => {
             timeStamp: nft_tx.timeStamp
         };
         //results.push(0x1618406d203aefa14526f77d79fdbeac9d42137b);
-        SomeModel.create(result_t);
+        if(saveDatabase)
+            SomeModel.create(result_t);
+        else
+            results.push(result_t);
         inserted_cnt ++;
     }
-    //SomeModel.insertMany(results);
-    console.log("inserted " + inserted_cnt + " rows");
+    if(saveDatabase)
+        console.log("inserted " + inserted_cnt + " rows");
+    else
+        return results;
 };
 
 export const getPastTransferList = async() => {
@@ -92,12 +102,10 @@ export const getPastTransferList = async() => {
     }
     endblock = queryResult[0].blockNumber * 1;
 
-    console.log(endblock);
     let startblock = endblock - 5;
     
     console.log('checking past transfer list', new Date());
     var url = 'https://api.etherscan.io/api?module=logs' + '&apikey=CUWP9CGZEG4FTWYUHK7C5MNVQMEJK7YGPK' + "&address=0x7be8076f4ea4a4ad08075c2508e481d6c946d12b" + "&toBlock=" + endblock + '&fromBlock=' + startblock
                 + '&action=getLogs' + '&topic0=' + "0xc4109843e0b7d514e4c093114b863f8e7d8d9a458c372cd51bfe526b588006c9";
-    console.log(url);
     await getTransferList(url);
 }

@@ -23,7 +23,6 @@ app.listen(80, () => {
 });
 try{
     getPastTransferList();
-
 }catch(e){}
 while(true) {
     try{
