@@ -10,8 +10,12 @@ const abi = fs.readJsonSync("abi.json");
 abiDecoder.addABI(abi);
 
 var getTokenNumber = (input) => {
-    const buyCallData = abiDecoder.decodeMethod(input).params[3]['value'];
-    const token_number = buyCallData.substr(buyCallData.length - 64);
+    try{
+        const buyCallData = abiDecoder.decodeMethod(input).params[3]['value'];
+        const token_number = buyCallData.substr(buyCallData.length - 64);
+    } catch(err) {
+        return 0;
+    }
     return token_number;
 }
 
@@ -53,9 +57,13 @@ var getTransferList = async(url) => {
                 + '&startblock=' + nft_tx.blockNumber + '&endblock=' + nft_tx.blockNumber + '&apikey=CUWP9CGZEG4FTWYUHK7C5MNVQMEJK7YGPK';
             const tokenID_resp = await fetch(url);
             tokenID_list = (await tokenID_resp.json()).result;
+            if( tokenID_list === undefined)
+                continue;
         }
         const tokenID_tx = tokenID_list.find(each => each.hash == nft_tx.transactionHash);
         const tokenID = getTokenNumber(tokenID_tx.input);
+        if( tokenID == 0)
+            continue;
         var result_t = {
             blockNumber: nft_tx.blockNumber,
             transactionHash: nft_tx.transactionHash,
