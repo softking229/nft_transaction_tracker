@@ -54,15 +54,25 @@ var getTransferList = async() => {
     var lastblock = await getLastBlock();
     var startblock = lastblock + 1;
     var url = 'https://api.etherscan.io/api?module=account&sort=desc' + '&apikey='+ process.env.API_KEY + '&address=' + process.env.ADDRESS;
-    var tokennfttx_data = fetch( url + '&action=tokennfttx' + '&startblock=' + startblock);
-    var txlist_data = fetch( url + '&action=txlist' + '&startblock=' + startblock);
-    Promise.all([tokennfttx_data, txlist_data]).then((values) => {
-        Promise.all([values[0].json(), values[1].json()]).then(values => {
-            var tokennfttx = values[0].result;
-            var txlist = values[1].result;
-            updateDatabase(tokennfttx, txlist, lastblock);
-        });
-    });
+    const { result: nft_tx_list } = fetch( url + '&action=tokennfttx' + '&startblock=' + startblock);
+    
+    for(const nft_tx of nft_tx_list) {
+        const nft_tx_detail_resp = await fetch( url + '&action=txlist' + '&startblock=' + nft_tx.blockNumber + '&endblock' + nft_tx.blockNumber + '&address=' + nft_tx.from);
+        console.log(nft_tx_detail_resp)
+        const nft_tx_detail = nft_tx_detail_resp.result.find(each => each.hash == nft_tx.hash);
+        var record = {
+            blockNumber: nft_tx.blockNumber,
+            from: nft_tx.from,
+            to: nft_tx.to,
+            tokenID: nft_tx.tokenID,
+            tokenName: nft_tx.tokenName,
+            price: nft_tx_detail.value,
+            timeStamp: nft_tx.timeStamp
+        };
+        console.log(record);
+
+    }
+
 };
 
 export default getTransferList;
