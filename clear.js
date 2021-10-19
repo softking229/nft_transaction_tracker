@@ -1,8 +1,6 @@
-import dotenv from "dotenv";
 import express from 'express';
 import mongoose from 'mongoose';
-import {getAll, getByWallet, clear_collection} from './controller.js';
-import getTransferList from './getTransferList_1.js'
+import { clear_collection} from './controller.js';
 const app = express();
 
 try {
