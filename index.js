@@ -23,6 +23,9 @@ app.listen(3000, () => {
 });
 getPastTransferList();
 while(true) {
-    await getNewestTransferList();
+    try{
+        await getNewestTransferList();
+
+    }catch(e){}
     await timer(1000);
 }
