@@ -1,6 +1,6 @@
 import SomeModel from "./SomeModel.js";
 
-const get_result = async ( req, res) => {
+export const get_result = async ( req, res) => {
     const from = req.query.from;
     const to = req.query.to;
     const tokenID = req.query.tokenID;
@@ -17,11 +17,6 @@ const get_result = async ( req, res) => {
     res.json(result);
 }
 
-const clear_collection = async () => {
+export const clear_collection = async () => {
     await SomeModel.deleteMany();
-}
-
-export default {
-    get_result,
-    clear_collection
 }
