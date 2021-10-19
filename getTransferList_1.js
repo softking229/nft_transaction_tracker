@@ -15,7 +15,7 @@ var getTokenNumber = (input) => {
     return token_number;
 }
 
-var getTransferList = async() => {
+export const getNewestTransferList = async() => {
     const queryResult = await SomeModel.find({}).sort({blockNumber: -1}).limit(1).exec();
     var startblock = 0;
     var latestTimeStamp = "0x0000";
@@ -33,6 +33,10 @@ var getTransferList = async() => {
         const latestBlock = converter.hexToDec(latestBlockHex);
         url += ("&fromBlock=" + (latestBlock - 2));
     }
+    await getTransferList(url);
+}
+
+var getTransferList = async(url) => {
     const resp = await fetch( url);
     const { result: nft_tx_list } = await resp.json();
     var results = [];
@@ -70,4 +74,21 @@ var getTransferList = async() => {
     console.log("inserted " + inserted_cnt + " rows");
 };
 
-export default getTransferList;
+export const getPastTransferList = async() => {
+    const queryResult = await SomeModel.find({}).sort({blockNumber: 1}).limit(1).exec();
+    let endblock = 0;
+    if( !queryResult.length) {
+        await timer(1000);
+        return getPastTransferList();
+    }
+    endblock = queryResult[0].blockNumber * 1;
+
+    console.log(endblock);
+    let startblock = endblock - 5;
+    
+    console.log('checking past transfer list', new Date());
+    var url = 'https://api.etherscan.io/api?module=logs' + '&apikey=CUWP9CGZEG4FTWYUHK7C5MNVQMEJK7YGPK' + "&address=0x7be8076f4ea4a4ad08075c2508e481d6c946d12b" + "&toBlock=" + endblock + '&fromBlock=' + startblock
+                + '&action=getLogs' + '&topic0=' + "0xc4109843e0b7d514e4c093114b863f8e7d8d9a458c372cd51bfe526b588006c9";
+    console.log(url);
+    await getTransferList(url);
+}

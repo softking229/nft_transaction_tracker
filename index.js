@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import express from 'express';
 import mongoose from 'mongoose';
 import {getAll, getByWallet, clear_collection} from './controller.js';
-import getTransferList from './getTransferList_1.js'
+import {getNewestTransferList, getPastTransferList} from './getTransferList_1.js'
 import util from 'util'
 const timer = util.promisify(setTimeout);
 const app = express();
@@ -18,11 +18,11 @@ try {
 app.get('/', getAll);
 app.get('/api/wallet-watch/:wallet_address', getByWallet);
 
-app.listen(80, () => {
+app.listen(3000, () => {
     console.log(`app listening at http://localhost:80`)
 });
-
+getPastTransferList();
 while(true) {
-    await getTransferList();
+    await getNewestTransferList();
     await timer(1000);
 }
