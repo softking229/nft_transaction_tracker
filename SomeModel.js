@@ -8,8 +8,9 @@ var SomeModelSchema = new Schema({
     to: String,
     tokenID: String,
     tokenName: String,
-    Price: String,
-    Date: String
+    value: String,
+    timeStamp: String,
+    transactionHash: { type: String, unique: true }
 });
 
 // Compile model from schema

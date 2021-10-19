@@ -1,6 +1,6 @@
 import SomeModel from "./SomeModel.js";
 
-export const get_result = async ( req, res) => {
+export const getAll = async ( req, res) => {
     const from = req.query.from;
     const to = req.query.to;
     const tokenID = req.query.tokenID;
@@ -14,6 +14,11 @@ export const get_result = async ( req, res) => {
         query['tokenID'] = tokenID;
 
     const result = await SomeModel.find(query).exec();
+    res.json(result);
+}
+
+export const getByWallet = async ( req, res) => {
+    const result = await SomeModel.find({$or:[{from: req.params.wallet_address}, {to: req.params.wallet_address}]}).exec();
     res.json(result);
 }
 

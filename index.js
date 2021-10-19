@@ -1,29 +1,25 @@
 import dotenv from "dotenv";
 import express from 'express';
 import mongoose from 'mongoose';
-import {get_result, clear_collection} from './controller.js';
-import getTransferList from './getTransferList.js'
+import {getAll, getByWallet, clear_collection} from './controller.js';
+import getTransferList from './getTransferList_1.js'
 const app = express();
 
-dotenv.config({ silent: process.env.NODE_ENV === 'production' });
-
-var timerEvent = function() {
-    getTransferList();
-};
-
 try {
-    await mongoose.connect(process.env.DB_PATH, {useNewUrlParser: true, useUnifiedTopology: true});
-    await clear_collection();    
+    await mongoose.connect('mongodb://localhost:27017', {useNewUrlParser: true, useUnifiedTopology: true});
+    //await clear_collection();    
 } catch (err) {
     console.error("Please check MongoDB connection");
     process.exit();
 }
 
-timerEvent();
-setInterval(timerEvent, process.env.INTERVAL_DELAY);
+app.get('/', getAll);
+app.get('/api/wallet-watch/:wallet_address', getByWallet);
 
-app.get('/', get_result);
-
-app.listen(process.env.PORT, () => {
-    console.log(`app listening at http://localhost:${process.env.PORT}`)
+app.listen(80, () => {
+    console.log(`app listening at http://localhost:80`)
 });
+
+while(true) {
+    await getTransferList();
+}
