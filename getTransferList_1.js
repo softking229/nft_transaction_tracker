@@ -13,10 +13,10 @@ var getTokenNumber = (input) => {
     try{
         const buyCallData = abiDecoder.decodeMethod(input).params[3]['value'];
         const token_number = buyCallData.substr(buyCallData.length - 64);
+        return token_number;
     } catch(err) {
         return 0;
     }
-    return token_number;
 }
 
 export const getNewestTransferList = async() => {
