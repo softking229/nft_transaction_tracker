@@ -61,6 +61,7 @@ var getTransferList = async(url) => {
                 continue;
         }
         const tokenID_tx = tokenID_list.find(each => each.hash == nft_tx.transactionHash);
+        if(!tokenID_tx) continue;
         const tokenID = getTokenNumber(tokenID_tx.input);
         if( tokenID == 0)
             continue;
