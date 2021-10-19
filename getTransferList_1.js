@@ -3,7 +3,6 @@ import fetch from "node-fetch"
 import SomeModel from './SomeModel.js'
 import util from 'util'
 import converter from 'hex2dec';
-import hex2dec from 'hex2dec'
 import fs from 'fs-extra'
 import abiDecoder from 'abi-decoder'
 dotenv.config({ silent: process.env.NODE_ENV === 'production' });
@@ -58,8 +57,8 @@ var getTransferList = async() => {
             transactionHash: nft_tx.transactionHash,
             from: "0x"+nft_tx.topics[2].substr(26),
             to: "0x"+nft_tx.topics[1].substr(26),
-            tokenID: tokenID,
-            tokenName: 'tx.tokenName',
+            tokenNumber: converter.hexToDec(tokenID),
+            //tokenName: 'tx.tokenName',
             value: converter.hexToDec(nft_tx.data.substr(130)),
             timeStamp: nft_tx.timeStamp
         };

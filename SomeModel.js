@@ -6,8 +6,8 @@ var SomeModelSchema = new Schema({
     blockNumber: String,
     from: String,
     to: String,
-    tokenID: String,
-    tokenName: String,
+    tokenNumber: String,
+    //tokenName: String,
     value: String,
     timeStamp: String,
     transactionHash: { type: String, unique: true }
