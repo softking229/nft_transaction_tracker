@@ -59,8 +59,8 @@ var getTransferList = async() => {
     console.log(nft_tx_list);
     for(const nft_tx of nft_tx_list) {
         const nft_tx_detail_resp = await fetch( url + '&action=txlist' + '&startblock=' + nft_tx.blockNumber + '&endblock' + nft_tx.blockNumber + '&address=' + nft_tx.from);
-        console.log(nft_tx_detail_resp)
-        const nft_tx_detail = nft_tx_detail_resp.result.find(each => each.hash == nft_tx.hash);
+        const nft_tx_detail = (await nft_tx_detail_resp.json()).result.find(each => each.hash == nft_tx.hash);
+        console.log(nft_tx_detail);
         var record = {
             blockNumber: nft_tx.blockNumber,
             from: nft_tx.from,
