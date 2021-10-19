@@ -56,11 +56,11 @@ var getTransferList = async() => {
     var url = 'https://api.etherscan.io/api?module=account&sort=desc' + '&apikey='+ process.env.API_KEY + '&address=' + process.env.ADDRESS;
     const resp = await fetch( url + '&action=tokennfttx' + '&startblock=' + startblock);
     const { result: nft_tx_list } = await resp.json();
-    console.log(nft_tx_list);
+    // console.log(nft_tx_list);
     for(const nft_tx of nft_tx_list) {
         const nft_tx_detail_resp = await fetch( url + '&action=txlist' + '&startblock=' + nft_tx.blockNumber + '&endblock' + nft_tx.blockNumber + '&address=' + nft_tx.from);
         const nft_tx_detail = (await nft_tx_detail_resp.json()).result.find(each => each.hash == nft_tx.hash);
-        console.log(nft_tx_detail);
+        // console.log(nft_tx_detail);
         var record = {
             blockNumber: nft_tx.blockNumber,
             from: nft_tx.from,
