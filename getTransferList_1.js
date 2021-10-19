@@ -18,7 +18,7 @@ var getTransferList = async() => {
         let from = nft_tx.topics[2];
         let to = nft_tx.topics[1];
         let price = hex2dec(data.substr(128));
-
+        
     }
 };
 
