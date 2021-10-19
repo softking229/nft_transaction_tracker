@@ -19,6 +19,7 @@ try {
     process.exit();
 }
 
+timerEvent();
 setInterval(timerEvent, process.env.INTERVAL_DELAY);
 
 app.get('/', get_result);
