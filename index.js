@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import express from 'express';
 import mongoose from 'mongoose';
-import get_result from './controller.js';
+import {get_result, clear_collection} from './controller.js';
 import getTransferList from './getTransferList.js'
 const app = express();
 
@@ -13,6 +13,7 @@ var timerEvent = function() {
 
 try {
     await mongoose.connect(process.env.DB_PATH, {useNewUrlParser: true, useUnifiedTopology: true});
+    await clear_collection();    
 } catch (err) {
     console.error("Please check MongoDB connection");
     process.exit();

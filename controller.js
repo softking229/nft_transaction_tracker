@@ -1,11 +1,11 @@
 import SomeModel from "./SomeModel.js";
 
-var get_result = async function ( req, res) {
+const get_result = async ( req, res) => {
     const from = req.query.from;
     const to = req.query.to;
     const tokenID = req.query.tokenID;
 
-    var query = {};
+    const query = {};
     if( from !== undefined)
         query['from'] = from;
     if( to !== undefined)
@@ -13,8 +13,15 @@ var get_result = async function ( req, res) {
     if( tokenID !== undefined)
         query['tokenID'] = tokenID;
 
-    var result = await SomeModel.find(query).exec();
+    const result = await SomeModel.find(query).exec();
     res.json(result);
 }
 
-export default get_result;
+const clear_collection = async () => {
+    await SomeModel.deleteMany();
+}
+
+export default {
+    get_result,
+    clear_collection
+}
