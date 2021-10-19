@@ -3,6 +3,8 @@ import express from 'express';
 import mongoose from 'mongoose';
 import {getAll, getByWallet, clear_collection} from './controller.js';
 import getTransferList from './getTransferList_1.js'
+import util from 'util'
+const timer = util.promisify(setTimeout);
 const app = express();
 
 try {
@@ -22,4 +24,5 @@ app.listen(80, () => {
 
 while(true) {
     await getTransferList();
+    await timer(1000);
 }
